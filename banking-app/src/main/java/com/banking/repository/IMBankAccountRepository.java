@@ -30,7 +30,7 @@ public class IMBankAccountRepository implements BankAccountRepository {
         }
         return null; // Return null if account not found
     }
-
+    
     public void updateBalance(String accountNumber, double newBalance) {
         BankAccount account = getAccount(accountNumber);
         if (account != null) {

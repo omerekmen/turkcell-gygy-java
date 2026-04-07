@@ -10,6 +10,7 @@ import com.banking.repository.BankAccountRepository;
 public class Operations {
     Scanner scanner;
     User loggedInUser;
+    BankAccount userAccount;
     UserRepository userRepository;
     BankAccountRepository bankAccountRepository;
 
@@ -18,6 +19,7 @@ public class Operations {
         this.loggedInUser = loggedInUser;
         this.userRepository = userRepository;
         this.bankAccountRepository = bankAccountRepository;
+        this.userAccount = bankAccountRepository.getAccountByTckn(loggedInUser.getTckn());
     }
 
     public void mainMenu() {
@@ -38,7 +40,7 @@ public class Operations {
                     System.out.println("Viewing account details...");
                     System.out.println("------------------------------------------------------------------------ \n");
                     
-                    getAccountDetails(loggedInUser, bankAccountRepository);
+                    getAccountDetails();
 
                     System.out.println("------------------------------------------------------------------------ \n");
                     System.out.println("Press Enter to return to the main menu...");
@@ -67,7 +69,7 @@ public class Operations {
                 case "4":
                     System.out.println("Logging out...");
                     loggedInUser = null;
-                    break;
+                    System.exit(0);
                 default:
                     System.out.println("Invalid option. Please try again.");
                     continue;
@@ -90,6 +92,25 @@ public class Operations {
                 System.out.println("Depositing money...");
                 System.out.println("------------------------------------------------------------------------ \n");
 
+                System.out.println("Please enter the amount to deposit:");
+                String amountStr = scanner.nextLine();
+                try {
+                    double amount = Double.parseDouble(amountStr);
+                    if (amount <= 0) {
+                        System.out.println("Amount must be greater than zero. Please try again.");
+                        transactionMenu();
+                        return;
+                    }
+                    double newBalance = userAccount.getBalance() + amount;
+                    bankAccountRepository.updateBalance(userAccount.getAccountNumber(), newBalance);
+                    System.out.println("Deposit successful! New balance: " + newBalance);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid amount format. Please enter a valid number.");
+                    transactionMenu();
+                    return;
+                }
+
                 System.out.println("------------------------------------------------------------------------ \n");
                 System.out.println("Press Enter to return to the transaction menu...");
                 scanner.nextLine(); // Wait for user to press Enter before showing the menu again
@@ -100,6 +121,30 @@ public class Operations {
                 System.out.println("Withdrawing money...");
                 System.out.println("------------------------------------------------------------------------ \n");
 
+                System.out.println("Please enter the amount to withdraw:");
+                String withdrawAmountStr = scanner.nextLine();
+                try {
+                    double amount = Double.parseDouble(withdrawAmountStr);
+                    if (amount <= 0) {
+                        System.out.println("Amount must be greater than zero. Please try again.");
+                        transactionMenu();
+                        return;
+                    }
+                    if (amount > userAccount.getBalance()) {
+                        System.out.println("Insufficient funds. Your current balance is: " + userAccount.getBalance());
+                        transactionMenu();
+                        return;
+                    }
+                    double newBalance = userAccount.getBalance() - amount;
+                    bankAccountRepository.updateBalance(userAccount.getAccountNumber(), newBalance);
+                    System.out.println("Withdrawal successful! New balance: " + newBalance);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid amount format. Please enter a valid number.");
+                    transactionMenu();
+                    return;
+                }
+
                 System.out.println("------------------------------------------------------------------------ \n");
                 System.out.println("Press Enter to return to the transaction menu...");
                 scanner.nextLine(); // Wait for user to press Enter before showing the menu again
@@ -109,6 +154,44 @@ public class Operations {
                 System.out.println("\n------------------------------------------------------------------------");
                 System.out.println("Transferring money...");
                 System.out.println("------------------------------------------------------------------------ \n");
+
+                System.out.println("Please enter the recipient's account number:");
+                String recipientAccountNumber = scanner.nextLine();
+                BankAccount recipientAccount = bankAccountRepository.getAccount(recipientAccountNumber);
+                if (recipientAccount == null) {
+                    System.out.println("Recipient account not found. Please try again.");
+                    transactionMenu();
+                    return;
+                } else if (recipientAccount.getAccountNumber().equals(userAccount.getAccountNumber())) {
+                    System.out.println("You cannot transfer money to your own account. Please try again.");
+                    transactionMenu();
+                    return;
+                }
+                System.out.println("Please enter the amount to transfer:");
+                String transferAmountStr = scanner.nextLine();
+                try {
+                    double amount = Double.parseDouble(transferAmountStr);
+                    if (amount <= 0) {
+                        System.out.println("Amount must be greater than zero. Please try again.");
+                        transactionMenu();
+                        return;
+                    }
+                    if (amount > userAccount.getBalance()) {
+                        System.out.println("Insufficient funds. Your current balance is: " + userAccount.getBalance());
+                        transactionMenu();
+                        return;
+                    }
+                    double newSenderBalance = userAccount.getBalance() - amount;
+                    double newRecipientBalance = recipientAccount.getBalance() + amount;
+                    bankAccountRepository.updateBalance(userAccount.getAccountNumber(), newSenderBalance);
+                    bankAccountRepository.updateBalance(recipientAccount.getAccountNumber(), newRecipientBalance);
+                    System.out.println("Transfer successful! Your new balance: " + newSenderBalance);
+                    System.out.println("Recipient's new balance: " + newRecipientBalance + " (Account Number: " + recipientAccount.getAccountNumber() + ")" + " (For test purposes)");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid amount format. Please enter a valid number.");
+                    transactionMenu();
+                    return;
+                }
 
                 System.out.println("------------------------------------------------------------------------ \n");
                 System.out.println("Press Enter to return to the transaction menu...");
@@ -125,13 +208,12 @@ public class Operations {
         }
     }
 
-    public static void getAccountDetails(User loggedInUser, BankAccountRepository bankAccountRepository) {
-        BankAccount account = bankAccountRepository.getAccountByTckn(loggedInUser.getTckn());
-        if (account != null) {
+    public void getAccountDetails() {
+        if (userAccount != null) {
             System.out.println("Name: " + loggedInUser.getName());
             System.out.println("TCKN: " + loggedInUser.getTckn());
-            System.out.println("Account Number: " + account.getAccountNumber());
-            System.out.println("Balance: " + account.getBalance());
+            System.out.println("Account Number: " + userAccount.getAccountNumber());
+            System.out.println("Balance: " + userAccount.getBalance());
         } else {
             System.out.println("No bank account found for this user.");
         }
