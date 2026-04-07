@@ -1,45 +1,56 @@
+<h1 align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=28&duration=3000&pause=1000&color=B8D8B0&center=true&vCenter=true&random=false&width=500&lines=%C3%96mer+Ekmen;Data+Scientist;Software+Engineer;Mathematics+Graduate" alt="Typing SVG" />
+</h1>
+
+<p align="center">
+  <a href="https://www.omerekmen.com"><img src="https://img.shields.io/badge/Portfolio-omerekmen.com-B8D8B0?style=for-the-badge&logo=safari&logoColor=white" alt="Portfolio" /></a>
+  <a href="https://linkedin.com/in/omerekmenn"><img src="https://img.shields.io/badge/LinkedIn-omerekmenn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="mailto:omerekmenn@gmail.com"><img src="https://img.shields.io/badge/Email-omerekmenn-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" /></a>
+</p>
+
+---
+
 # Turkcell GYGY 5.0 Java Practices
 
 This repository includes Java exercises and mini-applications created during the **Turkcell GYGY 5.0 Java** training program.
 
-## Contents
+## Workspace Layout
 
-- Core Java syntax and control structures
-- Object-Oriented Programming (OOP) principles
-- Classes, objects, inheritance, polymorphism, encapsulation
-- Collections and utility classes
-- Exception handling
-- Practice-oriented coding tasks
+```text
 
-## Project Structure
-
-Typical folder layout:
-
-<!-- ```text
-src/
- ├─ day01/
- ├─ day02/
- ├─ oop/
- └─ projects/
-``` -->
-
-## Requirements
-
-- Java JDK 17+ (or course-required version)
-- Any Java IDE (IntelliJ IDEA, Eclipse, VS Code) or terminal
-
-## Run
-
-Compile and run from terminal:
-
-```bash
-javac -d out src/**/*.java
-java -cp out <main-class>
+TURKCELL GYGY/
+  └─ turkcell-gygy-java/
+    └─ banking-app/
 ```
 
-> Replace `<main-class>` with the class containing the `main` method (for example: `day01.HelloWorld`).
+## Banking App Summary
+
+The banking app is a Maven-based Java 21 console application with:
+
+- user login and registration by TCKN
+- in-memory user and bank account repositories
+- account detail viewing
+- deposit, withdrawal, and transfer flows
+- mock data loaded at startup for demo use
+
+## Build And Run
+
+From the app folder:
+
+```bash
+cd TURKCELL\ GYGY/turkcell-gygy-java/banking-app
+mvn clean compile
+java -cp target/classes com.banking.Main
+```
+
+The included [Makefile](TURKCELL%20GYGY/turkcell-gygy-java/banking-app/Makefile) also provides:
+
+- `make compile`
+- `make runclass`
+- `make full`
 
 ## Notes
 
-- This repository is for learning and practice purposes.
-- Solutions may include different approaches depending on exercise goals.
+- The banking app stores data only in memory, so all state resets when the program exits.
+- Passwords are stored in plain text in the current training implementation.
+- The root of this workspace is mainly for coordination and reference across projects.
