@@ -1,8 +1,0 @@
-com/banking/Operations.class
-com/banking/repository/UserRepository.class
-com/banking/model/BankAccount.class
-com/banking/model/User.class
-com/banking/Main.class
-com/banking/repository/IMBankAccountRepository.class
-com/banking/repository/IMUserRepository.class
-com/banking/repository/BankAccountRepository.class

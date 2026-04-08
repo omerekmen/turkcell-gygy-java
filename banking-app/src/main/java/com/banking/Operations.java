@@ -4,8 +4,12 @@ import java.util.Scanner;
 
 import com.banking.model.User;
 import com.banking.model.BankAccount;
+import com.banking.model.CreditCard;
+import com.banking.model.BankCard;
 import com.banking.repository.UserRepository;
 import com.banking.repository.BankAccountRepository;
+import com.banking.repository.CreditCardRepository;
+import com.banking.repository.BankCardRepository;
 
 public class Operations {
     Scanner scanner;
@@ -13,12 +17,23 @@ public class Operations {
     BankAccount userAccount;
     UserRepository userRepository;
     BankAccountRepository bankAccountRepository;
+    CreditCardRepository creditCardRepository;
+    BankCardRepository bankCardRepository;
 
-    public Operations(Scanner scanner, User loggedInUser, UserRepository userRepository, BankAccountRepository bankAccountRepository) {
+    public Operations(
+        Scanner scanner, 
+        User loggedInUser, 
+        UserRepository userRepository, 
+        BankAccountRepository bankAccountRepository, 
+        CreditCardRepository creditCardRepository, 
+        BankCardRepository bankCardRepository
+    ) {
         this.scanner = scanner;
         this.loggedInUser = loggedInUser;
         this.userRepository = userRepository;
         this.bankAccountRepository = bankAccountRepository;
+        this.creditCardRepository = creditCardRepository;
+        this.bankCardRepository = bankCardRepository;
         this.userAccount = bankAccountRepository.getAccountByTckn(loggedInUser.getTckn());
     }
 
@@ -30,7 +45,7 @@ public class Operations {
             System.out.println("Please select an option:");
             System.out.println("1. View account details");
             System.out.println("2. Make a transaction");
-            System.out.println("3. View Credit Card Details");
+            System.out.println("3. Card Menu");
             System.out.println("4. Log out");
 
             String choice = scanner.nextLine();
@@ -59,8 +74,10 @@ public class Operations {
                     continue;
                 case "3":
                     System.out.println("\n------------------------------------------------------------------------");
-                    System.out.println("Viewing credit card details...");
+                    System.out.println("Viewing card details...");
                     System.out.println("------------------------------------------------------------------------ \n");
+
+                    cardMenu();
 
                     System.out.println("------------------------------------------------------------------------ \n");
                     System.out.println("Press Enter to return to the main menu...");
@@ -75,6 +92,17 @@ public class Operations {
                     continue;
             }
         }  
+    }
+
+    public void getAccountDetails() {
+        if (userAccount != null) {
+            System.out.println("Name: " + loggedInUser.getName());
+            System.out.println("TCKN: " + loggedInUser.getTckn());
+            System.out.println("Account Number: " + userAccount.getAccountNumber());
+            System.out.println("Balance: " + userAccount.getBalance());
+        } else {
+            System.out.println("No bank account found for this user.");
+        }
     }
 
     public void transactionMenu() {
@@ -208,14 +236,91 @@ public class Operations {
         }
     }
 
-    public void getAccountDetails() {
-        if (userAccount != null) {
-            System.out.println("Name: " + loggedInUser.getName());
-            System.out.println("TCKN: " + loggedInUser.getTckn());
-            System.out.println("Account Number: " + userAccount.getAccountNumber());
-            System.out.println("Balance: " + userAccount.getBalance());
-        } else {
-            System.out.println("No bank account found for this user.");
+    public void cardMenu() {
+        System.out.println("\n------------------------------------------------------------------------");
+        System.out.println("Select Operation:");
+        System.out.println("1. View Bank Cards");
+        System.out.println("2. View Credit Cards");
+        System.out.println("3. Return to Main Menu");
+
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "1":
+                System.out.println("\n------------------------------------------------------------------------");
+                System.out.println("Your Bank Cards:");
+                System.out.println("------------------------------------------------------------------------ \n");
+                BankCard[] bankCards = bankCardRepository.getBankCardsByAccountNumber(userAccount.getAccountNumber());
+                if (bankCards.length == 0) {
+                    System.out.println("You have no bank cards associated with this account.");
+                } else {
+                    for (BankCard card : bankCards) {
+                        System.out.println("Card Number: " + card.displayCardNumber());
+                        System.out.println("Balance: " + card.getBalance());
+                        System.out.println("Daily Withdrawal Limit: " + card.getDailyWithdrawalLimit());
+                        System.out.println("Daily Withdrawal Amount: " + card.getDailyWithdrawalAmount());
+                        System.out.println("------------------------------------------------------------------------");
+                    }
+                }
+                System.out.println("You can press 1 to create a new bank card for this account or press Enter to return to the card menu.");
+                String createCardChoice = scanner.nextLine();
+                if (createCardChoice.equals("1")) {
+                    String newCardNumber = bankCardRepository.createBankCard(userAccount.getAccountNumber());
+                    System.out.println("New bank card created successfully! Card Number: " + newCardNumber);
+                }
+                System.out.println("Press Enter to return to the card menu...");
+                scanner.nextLine(); // Wait for user to press Enter before showing the menu again
+                cardMenu();
+                break;  
+            case "2":
+                System.out.println("\n------------------------------------------------------------------------");
+                System.out.println("Your Credit Cards:");
+                System.out.println("------------------------------------------------------------------------ \n");
+                CreditCard[] creditCards = creditCardRepository.getCreditCardsByAccountNumber(userAccount.getAccountNumber());
+                if (creditCards.length == 0) {
+                    System.out.println("You have no credit cards associated with this account.");
+                } else {
+                    for (CreditCard card : creditCards) {
+                        System.out.println("Card Number: " + card.displayCardNumber());
+                        System.out.println("Credit Limit: " + card.getCreditLimit());
+                        System.out.println("Current Balance: " + card.getCurrentBalance());
+                        System.out.println("------------------------------------------------------------------------");
+                    }
+                }
+                System.out.println("You can press 1 to create a new credit card for this account or press Enter to return to the card menu.");
+                String createCreditCardChoice = scanner.nextLine();
+                if (createCreditCardChoice.equals("1")) {
+                    System.out.println("Please enter your monthly salary to determine your credit limit:");
+                    String userSalary = scanner.nextLine();
+                    try {
+                        double salary = Double.parseDouble(userSalary);
+                        if (salary <= 0) {
+                            System.out.println("Salary must be greater than zero. Please try again.");
+                            cardMenu();
+                            return;
+                        } else if (salary < 1000) {
+                            System.out.println("Minimum salary requirement for credit card is 1000. Please try again.");
+                            cardMenu();
+                            return;
+                        }
+                        String newCreditCardNumber = creditCardRepository.createCreditCard(userAccount.getAccountNumber(), salary);
+                        System.out.println("New credit card created successfully! Card Number: " + newCreditCardNumber);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid salary format. Please enter a valid number.");
+                        cardMenu();
+                        return;
+                    }
+                }
+                System.out.println("Press Enter to return to the card menu...");
+                scanner.nextLine(); // Wait for user to press Enter before showing the menu again
+                cardMenu();
+                break;
+            case "3":
+                mainMenu();
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+                cardMenu();
+                break;
         }
     }
 }

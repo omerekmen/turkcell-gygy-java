@@ -5,14 +5,20 @@ import java.util.Scanner;
 import com.banking.model.User;
 import com.banking.repository.UserRepository;
 import com.banking.repository.BankAccountRepository;
+import com.banking.repository.CreditCardRepository;
+import com.banking.repository.BankCardRepository;
 import com.banking.repository.IMUserRepository;
 import com.banking.repository.IMBankAccountRepository;
+import com.banking.repository.IMCreditCardRepository;
+import com.banking.repository.IMBankCardRepository;
 
 public class Main {
     public static void main(String[] args) {
         UserRepository userRepository = new IMUserRepository();
         BankAccountRepository bankAccountRepository = new IMBankAccountRepository();
-        
+        CreditCardRepository creditCardRepository = new IMCreditCardRepository();
+        BankCardRepository bankCardRepository = new IMBankCardRepository();
+
         loadMockData(userRepository, bankAccountRepository);
 
         System.out.println("\n------------------------------------------------------------------------");
@@ -23,7 +29,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         
         User loggedInUser = login(userRepository, bankAccountRepository, scanner);
-        Operations operations = new Operations(scanner, loggedInUser, userRepository, bankAccountRepository);
+        Operations operations = new Operations(scanner, loggedInUser, userRepository, bankAccountRepository, creditCardRepository, bankCardRepository);
         operations.mainMenu();
 
         scanner.close();
