@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: spring-starter
+  datasource:
+    url: jdbc:postgresql://0.0.0.0:5432/ecommerce
+    username: admin
+    password: turkcell-gygy-admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

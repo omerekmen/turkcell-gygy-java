@@ -1,8 +1,7 @@
---------------------------------------------------
--- USERS (KVKK: hard delete yapılabilir)
---------------------------------------------------
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Normalde kod üzerinden uuid oluşturacağız
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     national_id VARCHAR(20),
@@ -12,17 +11,14 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---------------------------------------------------
--- STUDENT & STAFF
---------------------------------------------------
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     student_number VARCHAR(50) UNIQUE NOT NULL,
     is_active BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE staff (
+CREATE TABLE IF NOT EXISTS staff (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     staff_number VARCHAR(50) UNIQUE NOT NULL,
@@ -30,32 +26,23 @@ CREATE TABLE staff (
     is_active BOOLEAN DEFAULT TRUE
 );
 
---------------------------------------------------
--- PUBLISHER & AUTHOR
---------------------------------------------------
-CREATE TABLE publishers (
+CREATE TABLE IF NOT EXISTS publishers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE authors (
+CREATE TABLE IF NOT EXISTS authors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     first_name VARCHAR(100),
     last_name VARCHAR(100)
 );
 
---------------------------------------------------
--- CATEGORY
---------------------------------------------------
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
---------------------------------------------------
--- BOOK
---------------------------------------------------
-CREATE TABLE books (
+CREATE TABLE IF NOT EXISTS books (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(255) NOT NULL,
     isbn VARCHAR(50) UNIQUE,
@@ -65,31 +52,25 @@ CREATE TABLE books (
     deleted_at TIMESTAMP
 );
 
---------------------------------------------------
--- BOOK AUTHORS (M:N)
---------------------------------------------------
-CREATE TABLE book_authors (
+CREATE TABLE IF NOT EXISTS book_authors (
     book_id UUID REFERENCES books(id) ON DELETE CASCADE,
     author_id UUID REFERENCES authors(id),
     PRIMARY KEY (book_id, author_id)
 );
 
---------------------------------------------------
--- LOCATION STRUCTURE
---------------------------------------------------
-CREATE TABLE floors (
+CREATE TABLE IF NOT EXISTS floors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(50),
     level INT UNIQUE
 );
 
-CREATE TABLE sections (
+CREATE TABLE IF NOT EXISTS sections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     floor_id UUID REFERENCES floors(id),
     name VARCHAR(100)
 );
 
-CREATE TABLE shelves (
+CREATE TABLE IF NOT EXISTS shelves (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     section_id UUID REFERENCES sections(id),
     code VARCHAR(50),
@@ -97,10 +78,7 @@ CREATE TABLE shelves (
     category_id UUID REFERENCES categories(id)
 );
 
---------------------------------------------------
--- BOOK COPIES
---------------------------------------------------
-CREATE TABLE book_copies (
+CREATE TABLE IF NOT EXISTS book_copies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     book_id UUID REFERENCES books(id),
     barcode VARCHAR(100) UNIQUE NOT NULL,
@@ -108,10 +86,7 @@ CREATE TABLE book_copies (
     status VARCHAR(50) DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE', 'BORROWED', 'RESERVED', 'DAMAGED', 'LOST'))
 );
 
---------------------------------------------------
--- LOAN SYSTEM
---------------------------------------------------
-CREATE TABLE loans (
+CREATE TABLE IF NOT EXISTS loans (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id UUID REFERENCES students(id),
     staff_id UUID REFERENCES staff(id),
@@ -120,26 +95,20 @@ CREATE TABLE loans (
     status VARCHAR(50) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'COMPLETED', 'OVERDUE'))
 );
 
-CREATE TABLE loan_book_copies (
+CREATE TABLE IF NOT EXISTS loan_book_copies (
     loan_id UUID REFERENCES loans(id) ON DELETE CASCADE,
     book_copy_id UUID REFERENCES book_copies(id),
     PRIMARY KEY (loan_id, book_copy_id)
 );
 
---------------------------------------------------
--- RETURN SYSTEM
---------------------------------------------------
-CREATE TABLE returns (
+CREATE TABLE IF NOT EXISTS returns (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     loan_id UUID REFERENCES loans(id),
     return_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     processed_by UUID REFERENCES staff(id)
 );
 
---------------------------------------------------
--- FINE SYSTEM
---------------------------------------------------
-CREATE TABLE fines (
+CREATE TABLE IF NOT EXISTS fines (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id UUID REFERENCES students(id),
     loan_id UUID REFERENCES loans(id),
@@ -148,10 +117,7 @@ CREATE TABLE fines (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---------------------------------------------------
--- RESERVATION
---------------------------------------------------
-CREATE TABLE reservations (
+CREATE TABLE IF NOT EXISTS reservations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     student_id UUID REFERENCES students(id),
     book_id UUID REFERENCES books(id),
