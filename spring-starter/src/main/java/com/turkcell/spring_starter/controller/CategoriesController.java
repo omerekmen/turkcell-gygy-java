@@ -10,9 +10,12 @@ import com.turkcell.spring_starter.entity.Category;
 import com.turkcell.spring_starter.service.CategoryServiceImpl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -34,5 +37,20 @@ public class CategoriesController {
     @GetMapping
     public List<ListCategoryResponse> getAll() {
         return categoryServiceImpl.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public CreatedCategoryResponse getById(UUID id) {
+        return categoryServiceImpl.getById(id);
+    }
+
+    @PostMapping("/{id}")
+    public CreatedCategoryResponse update(UUID id, @RequestBody CreateCategoryRequest request) {
+        return categoryServiceImpl.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(UUID id) {
+        categoryServiceImpl.delete(id);
     }
 }

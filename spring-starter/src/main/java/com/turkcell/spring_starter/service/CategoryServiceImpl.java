@@ -2,6 +2,7 @@ package com.turkcell.spring_starter.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.stereotype.Service;
@@ -34,18 +35,47 @@ public class CategoryServiceImpl {
     } 
 
     public List<ListCategoryResponse> getAll() {
-        List<Category> categories = categoryRepository.findAll();
+        return categoryRepository.findAll()
+            .stream()
+            .map(category -> {
+                ListCategoryResponse response = new ListCategoryResponse();
+                response.setId(category.getId());
+                response.setName(category.getName());
+                return response;
+            })
+            .toList();
+    }
 
-        // TODO: Refactor
-        List<ListCategoryResponse> responseList = new ArrayList<>();
+    public CreatedCategoryResponse getById(UUID id) {
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        for (Category category : categories) {
-            ListCategoryResponse response = new ListCategoryResponse();
-            response.setId(category.getId());
-            response.setName(category.getName());
-            responseList.add(response);
-        }
+        CreatedCategoryResponse response = new CreatedCategoryResponse();
+        response.setId(category.getId());
+        response.setName(category.getName());
 
-        return responseList;
+        return response;
+    }
+
+    public CreatedCategoryResponse update(UUID id, CreateCategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        category.setName(request.getName());
+
+        category = categoryRepository.save(category);
+
+        CreatedCategoryResponse response = new CreatedCategoryResponse();
+        response.setId(category.getId());
+        response.setName(category.getName());
+
+        return response;
+    }
+    
+    public void delete(UUID id) {
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        categoryRepository.delete(category);
     }
 }

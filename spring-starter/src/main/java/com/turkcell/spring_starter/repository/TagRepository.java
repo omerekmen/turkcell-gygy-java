@@ -5,10 +5,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.turkcell.spring_starter.entity.Category;
+import com.turkcell.spring_starter.entity.Tag;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, UUID>
-{
-	boolean existsByNameIgnoreCase(String name);
+public interface TagRepository extends JpaRepository<Tag, UUID> {
+    boolean existsByNameIgnoreCase(String name);
 }

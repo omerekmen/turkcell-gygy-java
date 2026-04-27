@@ -5,10 +5,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.turkcell.spring_starter.entity.Category;
+import com.turkcell.spring_starter.entity.Product;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, UUID>
-{
-	boolean existsByNameIgnoreCase(String name);
+public interface ProductRepository extends JpaRepository<Product, UUID> {
 }
