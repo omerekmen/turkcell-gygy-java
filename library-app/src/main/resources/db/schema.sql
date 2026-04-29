@@ -126,3 +126,27 @@ CREATE TABLE IF NOT EXISTS reservations (
     reserved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP
 );
+
+-- Exception Logging Table
+CREATE TABLE IF NOT EXISTS exception_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    exception_type VARCHAR(255) NOT NULL,
+    message TEXT,
+    stack_trace TEXT NOT NULL,
+    method VARCHAR(10),
+    uri TEXT,
+    query_params TEXT,
+    request_body TEXT,
+    user_info VARCHAR(255),
+    client_ip VARCHAR(45),
+    status_code INTEGER,
+    context TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes for exception_logs for better query performance
+CREATE INDEX IF NOT EXISTS idx_exception_logs_created_at ON exception_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_exception_logs_exception_type ON exception_logs(exception_type);
+CREATE INDEX IF NOT EXISTS idx_exception_logs_status_code ON exception_logs(status_code);
+CREATE INDEX IF NOT EXISTS idx_exception_logs_user_info ON exception_logs(user_info);
+CREATE INDEX IF NOT EXISTS idx_exception_logs_client_ip ON exception_logs(client_ip);

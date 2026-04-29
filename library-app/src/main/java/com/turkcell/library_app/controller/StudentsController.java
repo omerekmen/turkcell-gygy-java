@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.turkcell.library_app.dto.ApiResult;
 
 import com.turkcell.library_app.dto.student.CreateStudentRequest;
 import com.turkcell.library_app.dto.student.StudentResponse;
@@ -27,31 +30,38 @@ public class StudentsController {
         this.studentService = studentService;
     }
 
+
     @PostMapping
-    public StudentResponse create(@RequestBody CreateStudentRequest request) {
-        return studentService.create(request);
+    public ApiResult<StudentResponse> create(@RequestBody CreateStudentRequest request) {
+        StudentResponse response = studentService.create(request);
+        return ApiResult.success(HttpStatus.CREATED.value(), "Student created successfully", response);
     }
 
     @GetMapping("/{id}")
-    public StudentResponse getById(@PathVariable UUID id) {
-        return studentService.getById(id);
+    public ApiResult<StudentResponse> getById(@PathVariable UUID id) {
+        StudentResponse response = studentService.getById(id);
+        return ApiResult.success("Student retrieved successfully", response);
     }
 
     @GetMapping
-    public Page<StudentResponse> getAll(
+    public ApiResult<Page<StudentResponse>> getAll(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
-        return studentService.getAll(page, size);
+        Page<StudentResponse> response = studentService.getAll(page, size);
+        return ApiResult.success("Students retrieved successfully", response);
     }
 
     @PutMapping("/{id}")
-    public StudentResponse update(@PathVariable UUID id, @RequestBody UpdateStudentRequest request) {
-        return studentService.update(id, request);
+    public ApiResult<StudentResponse> update(@PathVariable UUID id, @RequestBody UpdateStudentRequest request) {
+        StudentResponse response = studentService.update(id, request);
+        return ApiResult.success("Student updated successfully", response);
+        
     }
-
+    
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ApiResult<Void> delete(@PathVariable UUID id) {
         studentService.delete(id);
+        return ApiResult.success(HttpStatus.NO_CONTENT.value(), "Student deleted successfully");
     }
 }

@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.turkcell.library_app.dto.ApiResult;
 
 import com.turkcell.library_app.dto.staff.CreateStaffRequest;
 import com.turkcell.library_app.dto.staff.StaffResponse;
@@ -27,31 +30,39 @@ public class StaffController {
         this.staffService = staffService;
     }
 
+
     @PostMapping
-    public StaffResponse create(@RequestBody CreateStaffRequest request) {
-        return staffService.create(request);
+    public ApiResult<StaffResponse> create(@RequestBody CreateStaffRequest request) {
+        StaffResponse response = staffService.create(request);
+        return ApiResult.success(HttpStatus.CREATED.value(), "Staff created successfully", response);
     }
 
     @GetMapping("/{id}")
-    public StaffResponse getById(@PathVariable UUID id) {
-        return staffService.getById(id);
+    public ApiResult<StaffResponse> getById(@PathVariable UUID id) {
+        StaffResponse response = staffService.getById(id);
+        return ApiResult.success("Staff retrieved successfully", response);
     }
 
     @GetMapping
-    public Page<StaffResponse> getAll(
+    public ApiResult<Page<StaffResponse>> getAll(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
-        return staffService.getAll(page, size);
+        Page<StaffResponse> response = staffService.getAll(page, size);
+        return ApiResult.success("Staff retrieved successfully", response);
     }
 
     @PutMapping("/{id}")
-    public StaffResponse update(@PathVariable UUID id, @RequestBody UpdateStaffRequest request) {
-        return staffService.update(id, request);
+    public ApiResult<StaffResponse> update(@PathVariable UUID id, @RequestBody UpdateStaffRequest request) {
+        StaffResponse response = staffService.update(id, request);
+        return ApiResult.success("Staff updated successfully", response);
+        
     }
-
+    
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ApiResult<Void> delete(@PathVariable UUID id) {
         staffService.delete(id);
+        return ApiResult.success(HttpStatus.NO_CONTENT.value(), "Staff deleted successfully");
     }
 }
+        

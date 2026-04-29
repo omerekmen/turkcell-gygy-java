@@ -1,10 +1,8 @@
 package com.turkcell.spring_starter.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.spring_starter.dto.CreateCategoryRequest;
@@ -70,6 +68,18 @@ public class CategoryServiceImpl {
         response.setName(category.getName());
 
         return response;
+    }
+
+    public List<ListCategoryResponse> search(String name) {
+        return categoryRepository.search(name)
+            .stream()
+            .map(category -> {
+                ListCategoryResponse response = new ListCategoryResponse();
+                response.setId(category.getId());
+                response.setName(category.getName());
+                return response;
+            })
+            .toList();
     }
     
     public void delete(UUID id) {

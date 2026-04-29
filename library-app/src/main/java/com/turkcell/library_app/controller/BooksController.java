@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.turkcell.library_app.dto.ApiResult;
 
 import com.turkcell.library_app.dto.book.BookResponse;
 import com.turkcell.library_app.dto.book.CreateBookRequest;
@@ -27,32 +30,38 @@ public class BooksController {
         this.bookService = bookService;
     }
 
+
     @PostMapping
-    public BookResponse create(@RequestBody CreateBookRequest request) {
-        return bookService.create(request);
+    public ApiResult<BookResponse> create(@RequestBody CreateBookRequest request) {
+        BookResponse response = bookService.create(request);
+        return ApiResult.success(HttpStatus.CREATED.value(), "Book created successfully", response);
     }
 
     @GetMapping("/{id}")
-    public BookResponse getById(@PathVariable UUID id) {
-        return bookService.getById(id);
+    public ApiResult<BookResponse> getById(@PathVariable UUID id) {
+        BookResponse response = bookService.getById(id);
+        return ApiResult.success("Book retrieved successfully", response);
     }
 
     @GetMapping
-    public Page<BookResponse> getAll(
+    public ApiResult<Page<BookResponse>> getAll(
         @RequestParam(required = false) String title,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
-        return bookService.getAll(title, page, size);
+        Page<BookResponse> response = bookService.getAll(title, page, size);
+        return ApiResult.success("Books retrieved successfully", response);
     }
 
     @PutMapping("/{id}")
-    public BookResponse update(@PathVariable UUID id, @RequestBody UpdateBookRequest request) {
-        return bookService.update(id, request);
+    public ApiResult<BookResponse> update(@PathVariable UUID id, @RequestBody UpdateBookRequest request) {
+        BookResponse response = bookService.update(id, request);
+        return ApiResult.success("Book updated successfully", response);
     }
-
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ApiResult<Void> delete(@PathVariable UUID id) {
         bookService.delete(id);
+        return ApiResult.success(HttpStatus.NO_CONTENT.value(), "Book deleted successfully");
     }
 }
+    

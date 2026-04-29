@@ -13,5 +13,6 @@ public interface CategoryService {
     List<ListCategoryResponse> getAll();
     CreatedCategoryResponse getById(UUID id);
     CreatedCategoryResponse update(UUID id, UpdateCategoryRequest request);
+    List<ListCategoryResponse> search(String name);
     void delete(UUID id);
 }

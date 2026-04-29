@@ -19,6 +19,9 @@ import com.turkcell.library_app.dto.reservation.UpdateReservationStatusRequest;
 import com.turkcell.library_app.enums.ReservationStatus;
 import com.turkcell.library_app.service.ReservationService;
 
+import org.springframework.http.HttpStatus;
+import com.turkcell.library_app.dto.ApiResult;
+
 @RestController
 @RequestMapping("/api/v{version:1}/reservations")
 public class ReservationsController {
@@ -28,33 +31,38 @@ public class ReservationsController {
         this.reservationService = reservationService;
     }
 
+
     @PostMapping
-    public ReservationResponse create(@RequestBody CreateReservationRequest request) {
-        return reservationService.create(request);
+    public ApiResult<ReservationResponse> create(@RequestBody CreateReservationRequest request) {
+        ReservationResponse response = reservationService.create(request);
+        return ApiResult.success(HttpStatus.CREATED.value(), "Reservation created successfully", response);
     }
 
     @GetMapping("/{id}")
-    public ReservationResponse getById(@PathVariable UUID id) {
-        return reservationService.getById(id);
+    public ApiResult<ReservationResponse> getById(@PathVariable UUID id) {
+        ReservationResponse response = reservationService.getById(id);
+        return ApiResult.success("Reservation retrieved successfully", response);
     }
 
     @GetMapping
-    public Page<ReservationResponse> getAll(
+    public ApiResult<Page<ReservationResponse>> getAll(
         @RequestParam(required = false) UUID bookId,
         @RequestParam(required = false) ReservationStatus status,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
-        return reservationService.getAll(bookId, status, page, size);
+        Page<ReservationResponse> response = reservationService.getAll(bookId, status, page, size);
+        return ApiResult.success("Reservations retrieved successfully", response);
     }
 
     @PatchMapping("/{id}/status")
-    public ReservationResponse updateStatus(@PathVariable UUID id, @RequestBody UpdateReservationStatusRequest request) {
-        return reservationService.updateStatus(id, request);
+    public ApiResult<ReservationResponse> updateStatus(@PathVariable UUID id, @RequestBody UpdateReservationStatusRequest request) {
+        ReservationResponse response = reservationService.updateStatus(id, request);
+        return ApiResult.success("Reservation status updated successfully", response);
     }
-
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ApiResult<Void> delete(@PathVariable UUID id) {
         reservationService.delete(id);
+        return ApiResult.success(HttpStatus.NO_CONTENT.value(), "Reservation deleted successfully");
     }
 }
