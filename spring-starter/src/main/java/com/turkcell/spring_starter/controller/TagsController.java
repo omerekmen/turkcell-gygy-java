@@ -3,6 +3,7 @@ package com.turkcell.spring_starter.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkcell.spring_starter.dto.ApiResult;
 import com.turkcell.spring_starter.dto.CreateTagRequest;
 import com.turkcell.spring_starter.dto.CreatedTagResponse;
 import com.turkcell.spring_starter.dto.ListTagResponse;
@@ -28,27 +30,28 @@ public class TagsController {
     }
 
     @PostMapping
-    public CreatedTagResponse create(@RequestBody CreateTagRequest request) {
-        return tagService.create(request);
+    public ApiResult<CreatedTagResponse> create(@RequestBody CreateTagRequest request) {
+        return ApiResult.success(HttpStatus.CREATED.value(), "Tag created successfully", tagService.create(request));
     }
 
     @GetMapping
-    public List<ListTagResponse> getAll() {
-        return tagService.getAll();
+    public ApiResult<List<ListTagResponse>> getAll() {
+        return ApiResult.success("Tags retrieved successfully", tagService.getAll());
     }
 
     @GetMapping("/{id}")
-    public CreatedTagResponse getById(@PathVariable UUID id) {
-        return tagService.getById(id);
+    public ApiResult<CreatedTagResponse> getById(@PathVariable UUID id) {
+        return ApiResult.success("Tag retrieved successfully", tagService.getById(id));
     }
 
     @PutMapping("/{id}")
-    public CreatedTagResponse update(@PathVariable UUID id, @RequestBody UpdateTagRequest request) {
-        return tagService.update(id, request);
+    public ApiResult<CreatedTagResponse> update(@PathVariable UUID id, @RequestBody UpdateTagRequest request) {
+        return ApiResult.success("Tag updated successfully", tagService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ApiResult<Void> delete(@PathVariable UUID id) {
         tagService.delete(id);
+        return ApiResult.success(HttpStatus.NO_CONTENT.value(), "Tag deleted successfully");
     }
 }

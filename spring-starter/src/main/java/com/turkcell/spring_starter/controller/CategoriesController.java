@@ -1,9 +1,12 @@
 package com.turkcell.spring_starter.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import com.turkcell.spring_starter.dto.ApiResult;
 import com.turkcell.spring_starter.dto.CreateCategoryRequest;
 import com.turkcell.spring_starter.dto.CreatedCategoryResponse;
 import com.turkcell.spring_starter.dto.ListCategoryResponse;
@@ -28,33 +31,34 @@ public class CategoriesController {
     }
 
     @PostMapping()
-    public CreatedCategoryResponse create(@RequestBody CreateCategoryRequest createCategoryRequest)
+    public ApiResult<CreatedCategoryResponse> create(@RequestBody CreateCategoryRequest createCategoryRequest)
     {
-       return categoryServiceImpl.create(createCategoryRequest);
+       return ApiResult.success(HttpStatus.CREATED.value(), "Category created successfully", categoryServiceImpl.create(createCategoryRequest));
     }
 
     @GetMapping
-    public List<ListCategoryResponse> getAll() {
-        return categoryServiceImpl.getAll();
+    public ApiResult<List<ListCategoryResponse>> getAll() {
+        return ApiResult.success("Categories retrieved successfully", categoryServiceImpl.getAll());
     }
 
     @GetMapping("/{id}")
-    public CreatedCategoryResponse getById(UUID id) {
-        return categoryServiceImpl.getById(id);
+    public ApiResult<CreatedCategoryResponse> getById(@PathVariable UUID id) {
+        return ApiResult.success("Category retrieved successfully", categoryServiceImpl.getById(id));
     }
 
     @PostMapping("/{id}")
-    public CreatedCategoryResponse update(UUID id, @RequestBody CreateCategoryRequest request) {
-        return categoryServiceImpl.update(id, request);
+    public ApiResult<CreatedCategoryResponse> update(@PathVariable UUID id, @RequestBody CreateCategoryRequest request) {
+        return ApiResult.success("Category updated successfully", categoryServiceImpl.update(id, request));
     }
 
     @GetMapping("/search")
-    public List<ListCategoryResponse> search(@RequestParam String name) {
-        return categoryServiceImpl.search(name);
+    public ApiResult<List<ListCategoryResponse>> search(@RequestParam String name) {
+        return ApiResult.success("Categories searched successfully", categoryServiceImpl.search(name));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(UUID id) {
+    public ApiResult<Void> delete(@PathVariable UUID id) {
         categoryServiceImpl.delete(id);
+        return ApiResult.success(HttpStatus.NO_CONTENT.value(), "Category deleted successfully");
     }
 }
