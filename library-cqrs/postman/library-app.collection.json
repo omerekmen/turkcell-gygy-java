@@ -1,0 +1,492 @@
+{
+  "info": {
+    "name": "Library App API",
+    "description": "Collection for library-app endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "version", "value": "1" },
+    { "key": "categoryId", "value": "" },
+    { "key": "bookId", "value": "" },
+    { "key": "studentId", "value": "" },
+    { "key": "staffId", "value": "" },
+    { "key": "loanId", "value": "" },
+    { "key": "reservationId", "value": "" },
+    { "key": "studentUserId", "value": "" },
+    { "key": "staffUserId", "value": "" },
+    { "key": "publisherId", "value": "" },
+    { "key": "authorId1", "value": "" },
+    { "key": "authorId2", "value": "" },
+    { "key": "bookCopyId1", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', function () {",
+                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
+                  "});",
+                  "pm.test('Category id captured', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.exist;",
+                  "  pm.collectionVariables.set('categoryId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Reference Books\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/categories"
+          }
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/categories?page=0&size=20"
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Reference & Encyclopedias\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/categories/{{categoryId}}"
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v{{version}}/categories/{{categoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', function () {",
+                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
+                  "});",
+                  "pm.test('Book id captured', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.exist;",
+                  "  pm.collectionVariables.set('bookId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Distributed Systems Patterns\",\n  \"isbn\": \"9781234567890\",\n  \"publisherId\": \"{{publisherId}}\",\n  \"publishedYear\": 2024,\n  \"categoryId\": \"{{categoryId}}\",\n  \"authorIds\": [\"{{authorId1}}\", \"{{authorId2}}\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/books"
+          }
+        },
+        {
+          "name": "Get Book By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/books/{{bookId}}"
+          }
+        },
+        {
+          "name": "List Books",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/books?page=0&size=20"
+          }
+        },
+        {
+          "name": "Search Books By Title",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/books?title=Clean&page=0&size=20"
+          }
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Distributed Systems Patterns - 2nd Edition\",\n  \"isbn\": \"9781234567890\",\n  \"publisherId\": \"{{publisherId}}\",\n  \"publishedYear\": 2025,\n  \"categoryId\": \"{{categoryId}}\",\n  \"authorIds\": [\"{{authorId1}}\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/books/{{bookId}}"
+          }
+        },
+        {
+          "name": "Delete Book (Soft)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v{{version}}/books/{{bookId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Create Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', function () {",
+                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
+                  "});",
+                  "pm.test('Student id captured', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.exist;",
+                  "  pm.collectionVariables.set('studentId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{studentUserId}}\",\n  \"studentNumber\": \"STU-5001\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/students"
+          }
+        },
+        {
+          "name": "Get Student By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/students/{{studentId}}"
+          }
+        },
+        {
+          "name": "List Students",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/students?page=0&size=20"
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentNumber\": \"STU-5001-UPDATED\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/students/{{studentId}}"
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v{{version}}/students/{{studentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Staff",
+      "item": [
+        {
+          "name": "Create Staff",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', function () {",
+                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
+                  "});",
+                  "pm.test('Staff id captured', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.exist;",
+                  "  pm.collectionVariables.set('staffId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{staffUserId}}\",\n  \"staffNumber\": \"STF-7001\",\n  \"role\": \"CIRCULATION_DESK\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/staff"
+          }
+        },
+        {
+          "name": "Get Staff By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/staff/{{staffId}}"
+          }
+        },
+        {
+          "name": "List Staff",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/staff?page=0&size=20"
+          }
+        },
+        {
+          "name": "Update Staff",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staffNumber\": \"STF-7001-UPDATED\",\n  \"role\": \"LIBRARIAN\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/staff/{{staffId}}"
+          }
+        },
+        {
+          "name": "Delete Staff",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v{{version}}/staff/{{staffId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loans",
+      "item": [
+        {
+          "name": "Create Loan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', function () {",
+                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
+                  "});",
+                  "pm.test('Loan id captured', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.exist;",
+                  "  pm.collectionVariables.set('loanId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"staffId\": \"{{staffId}}\",\n  \"dueDate\": \"2027-01-31T12:00:00\",\n  \"bookCopyIds\": [\"{{bookCopyId1}}\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/loans"
+          }
+        },
+        {
+          "name": "Get Loan By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/loans/{{loanId}}"
+          }
+        },
+        {
+          "name": "List Loans",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/loans?page=0&size=20"
+          }
+        },
+        {
+          "name": "Filter Loans",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/loans?studentId={{studentId}}&status=ACTIVE&page=0&size=20"
+          }
+        },
+        {
+          "name": "Update Loan Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"OVERDUE\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/loans/{{loanId}}/status"
+          }
+        },
+        {
+          "name": "Return Loan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"processedByStaffId\": \"{{staffId}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/loans/{{loanId}}/return"
+          }
+        },
+        {
+          "name": "Delete Loan",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v{{version}}/loans/{{loanId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Create Reservation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', function () {",
+                  "  pm.expect(pm.response.code).to.be.within(200, 299);",
+                  "});",
+                  "pm.test('Reservation id captured', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.id).to.exist;",
+                  "  pm.collectionVariables.set('reservationId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"expiresAt\": \"2027-02-01T12:00:00\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/reservations"
+          }
+        },
+        {
+          "name": "Get Reservation By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/reservations/{{reservationId}}"
+          }
+        },
+        {
+          "name": "List Reservations",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/reservations?page=0&size=20"
+          }
+        },
+        {
+          "name": "Filter Reservations",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v{{version}}/reservations?bookId={{bookId}}&status=PENDING&page=0&size=20"
+          }
+        },
+        {
+          "name": "Update Reservation Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"READY\",\n  \"expiresAt\": \"2027-02-05T12:00:00\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v{{version}}/reservations/{{reservationId}}/status"
+          }
+        },
+        {
+          "name": "Delete Reservation",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v{{version}}/reservations/{{reservationId}}"
+          }
+        }
+      ]
+    }
+  ]
+}

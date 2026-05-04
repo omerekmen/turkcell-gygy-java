@@ -2,6 +2,8 @@ package com.turkcell.spring_starter.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,16 @@ public class TagServiceImpl implements TagService {
     public CreatedTagResponse getById(UUID id) {
         Tag tag = findTag(id);
         return mapCreated(tag);
+    }
+
+    public Set<Tag> getByIds(Set<UUID> ids) {
+        Set<Tag> tags = tagRepository.findAllById(ids)
+            .stream()
+            .collect(Collectors.toSet());
+        if (tags.size() != ids.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more tags not found");
+        }
+        return tags;
     }
 
     public CreatedTagResponse update(UUID id, UpdateTagRequest request) {

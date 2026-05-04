@@ -1,0 +1,23 @@
+{
+  "id": "library-app-local-env",
+  "name": "Library App Local",
+  "values": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "enabled": true },
+    { "key": "version", "value": "1", "enabled": true },
+    { "key": "categoryId", "value": "", "enabled": true },
+    { "key": "bookId", "value": "", "enabled": true },
+    { "key": "studentId", "value": "", "enabled": true },
+    { "key": "staffId", "value": "", "enabled": true },
+    { "key": "loanId", "value": "", "enabled": true },
+    { "key": "reservationId", "value": "", "enabled": true },
+    { "key": "studentUserId", "value": "", "enabled": true },
+    { "key": "staffUserId", "value": "", "enabled": true },
+    { "key": "publisherId", "value": "", "enabled": true },
+    { "key": "authorId1", "value": "", "enabled": true },
+    { "key": "authorId2", "value": "", "enabled": true },
+    { "key": "bookCopyId1", "value": "", "enabled": true }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2026-04-27T00:00:00.000Z",
+  "_postman_exported_using": "GitHub Copilot"
+}

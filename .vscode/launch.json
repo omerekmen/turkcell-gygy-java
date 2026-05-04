@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Starter Debug",
+            "request": "launch",
+            "mainClass": "com.turkcell.spring_starter.SpringStarterApplication",
+            "cwd": "${workspaceFolder}/spring-starter",
+            "classPaths": [
+                "$Runtime"
+            ],
+            "modulePaths": [
+                "$Auto"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}

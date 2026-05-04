@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: library-app
+  datasource:
+    url: jdbc:postgresql://0.0.0.0:5432/library
+    username: admin
+    password: turkcell-gygy-admin
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

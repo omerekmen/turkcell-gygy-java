@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public CreatedProductResponse create(CreateProductRequest request) {
+        Category category = findCategory(request.categoryId());
         Product product = new Product();
-        applyProductValues(product, request.getName(), request.getDescription(), request.getCategoryId(), request.getTagIds());
+        applyProductValues(product, request.name(), request.description(), category.getId(), request.tagIds());
         return mapCreated(productRepository.save(product));
     }
 
@@ -82,12 +84,11 @@ public class ProductServiceImpl implements ProductService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "categoryId is required");
         }
 
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category not found"));
+        Category category = findCategory(categoryId);
 
         Set<Tag> tags = new HashSet<>();
         if (tagIds != null && !tagIds.isEmpty()) {
-            tags = new HashSet<>(tagRepository.findAllById(tagIds));
+            tags = new HashSet<>(findTagsByIds(tagIds));
             if (tags.size() != tagIds.size()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more tags not found");
             }
@@ -124,5 +125,20 @@ public class ProductServiceImpl implements ProductService {
         response.setCategoryId(product.getCategory() == null ? null : product.getCategory().getId());
         response.setTagIds(extractTagIds(product.getTags()));
         return response;
+    }
+
+    private Category findCategory(UUID categoryId) {
+        return categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category not found"));
+    }
+
+    private Set<Tag> findTagsByIds(Set<UUID> tagIds) {
+        Set<Tag> tags = tagRepository.findAllById(tagIds)
+            .stream()
+            .collect(Collectors.toSet());
+        if (tags.size() != tagIds.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more tags not found");
+        }
+        return tags;
     }
 }

@@ -3,41 +3,14 @@ package com.turkcell.spring_starter.dto;
 import java.util.Set;
 import java.util.UUID;
 
-public class CreateProductRequest {
-    private String name;
-    private String description;
-    private UUID categoryId;
-    private Set<UUID> tagIds;
+import org.hibernate.validator.constraints.Length;
+import jakarta.validation.constraints.NotBlank;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public UUID getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(UUID categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Set<UUID> getTagIds() {
-        return tagIds;
-    }
-
-    public void setTagIds(Set<UUID> tagIds) {
-        this.tagIds = tagIds;
-    }
-}
+public record CreateProductRequest(
+    @NotBlank(message = "Product name is required")
+    @Length(min = 3, max = 100, message = "Product name must be between 3 and 100 characters")
+    String name,
+    String description,
+    UUID categoryId,
+    Set<UUID> tagIds
+) {}
