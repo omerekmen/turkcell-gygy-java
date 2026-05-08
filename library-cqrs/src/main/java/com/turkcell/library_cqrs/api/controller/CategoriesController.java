@@ -3,6 +3,7 @@ package com.turkcell.library_cqrs.api.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,19 +11,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
-import com.turkcell.library_cqrs.api.dto.category.UpdateCategoryRequest;
+import com.turkcell.library_cqrs.application.features.category.CategoryResponse;
 import com.turkcell.library_cqrs.application.features.category.command.create.CreateCategoryCommand;
 import com.turkcell.library_cqrs.application.features.category.command.delete.DeleteCategoryCommand;
 import com.turkcell.library_cqrs.application.features.category.command.update.UpdateCategoryCommand;
 import com.turkcell.library_cqrs.application.features.category.query.getall.GetCategoriesQuery;
 import com.turkcell.library_cqrs.application.features.category.query.getbyid.GetCategoryByIdQuery;
-import com.turkcell.library_cqrs.api.dto.category.CategoryResponse;
-import com.turkcell.library_cqrs.api.dto.category.CreateCategoryRequest;
 import com.turkcell.library_cqrs.core.mediator.Mediator;
 
 @RestController
@@ -36,9 +35,9 @@ public class CategoriesController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResult<CategoryResponse>> create(@RequestBody CreateCategoryRequest request) {
-        CategoryResponse dto = mediator.send(new CreateCategoryCommand(request.getName()));
-        return ResponseEntity.created(URI.create("/categories/" + dto.getId()))
+    public ResponseEntity<ApiResult<CategoryResponse>> create(@Valid @RequestBody CreateCategoryCommand request) {
+        CategoryResponse dto = mediator.send(request);
+        return ResponseEntity.created(URI.create("/categories/" + dto.id()))
             .body(ApiResult.success(HttpStatus.CREATED.value(), "Category created successfully", dto));
     }
 
@@ -53,8 +52,12 @@ public class CategoriesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResult<CategoryResponse>> update(@PathVariable UUID id, @RequestBody UpdateCategoryRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Category updated successfully", mediator.send(new UpdateCategoryCommand(id, request.getName()))));
+    public ResponseEntity<ApiResult<CategoryResponse>> update(@PathVariable UUID id, @Valid @RequestBody UpdateCategoryCommand request) {
+        if (!id.equals(request.id())) {
+            throw new IllegalArgumentException("Path id and request body id must match");
+        }
+
+        return ResponseEntity.ok(ApiResult.success("Category updated successfully", mediator.send(request)));
     }
 
     @DeleteMapping("/{id}")

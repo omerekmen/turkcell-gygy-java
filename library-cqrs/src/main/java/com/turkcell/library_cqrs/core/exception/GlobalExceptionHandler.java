@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
 import com.turkcell.library_cqrs.domain.entity.ExceptionLog;
@@ -108,6 +109,13 @@ public class GlobalExceptionHandler {
         ExceptionLog log = saveLog(ex, request, "Unhandled exception", HttpStatus.INTERNAL_SERVER_ERROR.value());
         logger.error("Unhandled exception on {} - {}", request.getRequestURI(), ex.getMessage(), ex);
         return ApiResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred. Please reference error ID: " + log.getId(), log.getId().toString());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ApiResult<?> handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request) {
+        ExceptionLog log = saveLog(ex, request, "Resource not found", HttpStatus.NOT_FOUND.value());
+        logger.warn("Resource not found {} {}", request.getMethod(), request.getRequestURI());
+        return ApiResult.error(HttpStatus.NOT_FOUND.value(), "The requested resource was not found", log.getId().toString());
     }
 
     private ExceptionLog saveLog(Exception ex, HttpServletRequest request, String context, int statusCode) {

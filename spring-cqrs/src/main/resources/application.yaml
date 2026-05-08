@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: spring-cqrs
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/data.sql
+  datasource:
+    url: jdbc:postgresql://0.0.0.0:5432/ecommerce
+    username: admin
+    password: turkcell-gygy-admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    show-sql: true
+security:
+  jwt:
+    secret: c3ByaW5nLWNxcnMtc2VjcmV0LXNpZ24ta2V5LXN0cmluZy0yMDI2LTA1LTA4
+    expirationInSeconds: 360000
+    issuer: spring-cqrs

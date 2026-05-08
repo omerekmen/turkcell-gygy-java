@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.student.command.update;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.student.StudentResponse;
+import com.turkcell.library_cqrs.application.features.student.StudentResponse;
 import com.turkcell.library_cqrs.application.features.student.mapper.StudentMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.CommandHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.StudentRepository;

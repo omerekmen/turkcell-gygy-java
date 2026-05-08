@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.loan.LoanResponse;
+import com.turkcell.library_cqrs.application.features.loan.LoanResponse;
 import com.turkcell.library_cqrs.application.features.loan.mapper.LoanMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.CommandHandler;
 import com.turkcell.library_cqrs.domain.entity.Return;

@@ -1,6 +1,6 @@
 package com.turkcell.library_cqrs.application.features.exception.mapper;
 
-import com.turkcell.library_cqrs.api.dto.exception.ExceptionLogResponse;
+import com.turkcell.library_cqrs.application.features.exception.ExceptionLogResponse;
 import com.turkcell.library_cqrs.domain.entity.ExceptionLog;
 
 public final class ExceptionLogMapper {
@@ -13,20 +13,20 @@ public final class ExceptionLogMapper {
             return null;
         }
 
-        return ExceptionLogResponse.builder()
-            .id(entity.getId())
-            .exceptionType(entity.getExceptionType())
-            .message(entity.getMessage())
-            .stackTrace(entity.getStackTrace())
-            .method(entity.getMethod())
-            .uri(entity.getUri())
-            .queryParams(entity.getQueryParams())
-            .requestBody(entity.getRequestBody())
-            .userInfo(entity.getUserInfo())
-            .clientIp(entity.getClientIp())
-            .statusCode(entity.getStatusCode())
-            .createdAt(entity.getCreatedAt())
-            .context(entity.getContext())
-            .build();
+        return new ExceptionLogResponse(
+            entity.getId(),
+            entity.getExceptionType(),
+            entity.getMessage(),
+            entity.getStackTrace(),
+            entity.getMethod(),
+            entity.getUri(),
+            entity.getQueryParams(),
+            entity.getRequestBody(),
+            entity.getUserInfo(),
+            entity.getClientIp(),
+            entity.getStatusCode(),
+            entity.getContext(),
+            entity.getCreatedAt()
+        );
     }
 }

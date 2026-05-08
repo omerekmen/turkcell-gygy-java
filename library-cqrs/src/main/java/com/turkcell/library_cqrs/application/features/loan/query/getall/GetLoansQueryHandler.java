@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.loan.LoanResponse;
+import com.turkcell.library_cqrs.application.features.loan.LoanResponse;
 import com.turkcell.library_cqrs.application.features.loan.mapper.LoanMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.QueryHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.LoanRepository;

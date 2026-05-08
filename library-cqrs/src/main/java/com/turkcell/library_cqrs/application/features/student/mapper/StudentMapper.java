@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.student.mapper;
 
 import java.util.List;
 
-import com.turkcell.library_cqrs.api.dto.student.StudentResponse;
+import com.turkcell.library_cqrs.application.features.student.StudentResponse;
 import com.turkcell.library_cqrs.domain.entity.Student;
 
 public final class StudentMapper {
@@ -15,12 +15,12 @@ public final class StudentMapper {
             return null;
         }
 
-        var dto = new StudentResponse();
-        dto.setId(entity.getId());
-        dto.setUserId(entity.getUser() != null ? entity.getUser().getId() : null);
-        dto.setStudentNumber(entity.getStudentNumber());
-        dto.setIsActive(entity.getIsActive());
-        return dto;
+        return new StudentResponse(
+            entity.getId(),
+            entity.getUser() != null ? entity.getUser().getId() : null,
+            entity.getStudentNumber(),
+            entity.getIsActive()
+        );
     }
 
     public static List<StudentResponse> toDtoList(List<Student> entities) {

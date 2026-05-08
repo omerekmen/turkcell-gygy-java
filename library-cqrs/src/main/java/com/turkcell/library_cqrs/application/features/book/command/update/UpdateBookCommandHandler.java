@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.book.BookResponse;
+import com.turkcell.library_cqrs.application.features.book.BookResponse;
 import com.turkcell.library_cqrs.application.features.book.mapper.BookMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.CommandHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.AuthorRepository;

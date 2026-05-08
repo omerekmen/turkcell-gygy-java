@@ -2,8 +2,13 @@ package com.turkcell.library_cqrs.application.features.category.command.update;
 
 import java.util.UUID;
 
-import com.turkcell.library_cqrs.api.dto.category.CategoryResponse;
+import org.hibernate.validator.constraints.Length;
+
+import com.turkcell.library_cqrs.application.features.category.CategoryResponse;
 import com.turkcell.library_cqrs.core.mediator.cqrs.Command;
 
-public record UpdateCategoryCommand(UUID id, String name) implements Command<CategoryResponse> {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateCategoryCommand(@NotNull UUID id, @NotBlank @Length(min = 3, max = 100) String name) implements Command<CategoryResponse> {
 }

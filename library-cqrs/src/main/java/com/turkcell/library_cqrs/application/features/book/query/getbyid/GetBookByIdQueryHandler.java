@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.book.query.getbyid;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.book.BookResponse;
+import com.turkcell.library_cqrs.application.features.book.BookResponse;
 import com.turkcell.library_cqrs.application.features.book.mapper.BookMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.QueryHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.BookRepository;

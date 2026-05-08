@@ -3,6 +3,7 @@ package com.turkcell.library_cqrs.api.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
-import com.turkcell.library_cqrs.api.dto.student.CreateStudentRequest;
-import com.turkcell.library_cqrs.api.dto.student.StudentResponse;
-import com.turkcell.library_cqrs.api.dto.student.UpdateStudentRequest;
+import com.turkcell.library_cqrs.application.features.student.StudentResponse;
 import com.turkcell.library_cqrs.application.features.student.command.create.CreateStudentCommand;
 import com.turkcell.library_cqrs.application.features.student.command.delete.DeleteStudentCommand;
 import com.turkcell.library_cqrs.application.features.student.command.update.UpdateStudentCommand;
@@ -38,14 +37,10 @@ public class StudentsController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResult<StudentResponse>> create(@RequestBody CreateStudentRequest request) {
-        var dto = mediator.send(new CreateStudentCommand(
-            request.getUserId(),
-            request.getStudentNumber(),
-            request.getIsActive()
-        ));
+    public ResponseEntity<ApiResult<StudentResponse>> create(@Valid @RequestBody CreateStudentCommand request) {
+        var dto = mediator.send(request);
 
-        return ResponseEntity.created(URI.create("/students/" + dto.getId()))
+        return ResponseEntity.created(URI.create("/students/" + dto.id()))
             .body(ApiResult.success(HttpStatus.CREATED.value(), "Student created successfully", dto));
     }
 
@@ -63,8 +58,12 @@ public class StudentsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResult<StudentResponse>> update(@PathVariable UUID id, @RequestBody UpdateStudentRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Student updated successfully", mediator.send(new UpdateStudentCommand(id, request.getStudentNumber(), request.getIsActive()))));
+    public ResponseEntity<ApiResult<StudentResponse>> update(@PathVariable UUID id, @Valid @RequestBody UpdateStudentCommand request) {
+        if (!id.equals(request.id())) {
+            throw new IllegalArgumentException("Path id and request body id must match");
+        }
+
+        return ResponseEntity.ok(ApiResult.success("Student updated successfully", mediator.send(request)));
     }
 
     @DeleteMapping("/{id}")

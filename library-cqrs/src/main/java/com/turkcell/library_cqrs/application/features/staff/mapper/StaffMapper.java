@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.staff.mapper;
 
 import java.util.List;
 
-import com.turkcell.library_cqrs.api.dto.staff.StaffResponse;
+import com.turkcell.library_cqrs.application.features.staff.StaffResponse;
 import com.turkcell.library_cqrs.domain.entity.Staff;
 
 public final class StaffMapper {
@@ -15,13 +15,13 @@ public final class StaffMapper {
             return null;
         }
 
-        var dto = new StaffResponse();
-        dto.setId(entity.getId());
-        dto.setUserId(entity.getUser() != null ? entity.getUser().getId() : null);
-        dto.setStaffNumber(entity.getStaffNumber());
-        dto.setRole(entity.getRole());
-        dto.setIsActive(entity.getIsActive());
-        return dto;
+        return new StaffResponse(
+            entity.getId(),
+            entity.getUser() != null ? entity.getUser().getId() : null,
+            entity.getStaffNumber(),
+            entity.getRole(),
+            entity.getIsActive()
+        );
     }
 
     public static List<StaffResponse> toDtoList(List<Staff> entities) {

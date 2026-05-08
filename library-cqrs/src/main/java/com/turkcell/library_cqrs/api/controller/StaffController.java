@@ -3,6 +3,7 @@ package com.turkcell.library_cqrs.api.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
-import com.turkcell.library_cqrs.api.dto.staff.CreateStaffRequest;
-import com.turkcell.library_cqrs.api.dto.staff.StaffResponse;
-import com.turkcell.library_cqrs.api.dto.staff.UpdateStaffRequest;
+import com.turkcell.library_cqrs.application.features.staff.StaffResponse;
 import com.turkcell.library_cqrs.application.features.staff.command.create.CreateStaffCommand;
 import com.turkcell.library_cqrs.application.features.staff.command.delete.DeleteStaffCommand;
 import com.turkcell.library_cqrs.application.features.staff.command.update.UpdateStaffCommand;
@@ -38,9 +37,9 @@ public class StaffController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResult<StaffResponse>> create(@RequestBody CreateStaffRequest request) {
-        var dto = mediator.send(new CreateStaffCommand(request.getUserId(), request.getStaffNumber(), request.getRole(), request.getIsActive()));
-        return ResponseEntity.created(URI.create("/staff/" + dto.getId()))
+    public ResponseEntity<ApiResult<StaffResponse>> create(@Valid @RequestBody CreateStaffCommand request) {
+        var dto = mediator.send(request);
+        return ResponseEntity.created(URI.create("/staff/" + dto.id()))
             .body(ApiResult.success(HttpStatus.CREATED.value(), "Staff created successfully", dto));
     }
 
@@ -58,8 +57,12 @@ public class StaffController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResult<StaffResponse>> update(@PathVariable UUID id, @RequestBody UpdateStaffRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Staff updated successfully", mediator.send(new UpdateStaffCommand(id, request.getStaffNumber(), request.getRole(), request.getIsActive()))));
+    public ResponseEntity<ApiResult<StaffResponse>> update(@PathVariable UUID id, @Valid @RequestBody UpdateStaffCommand request) {
+        if (!id.equals(request.id())) {
+            throw new IllegalArgumentException("Path id and request body id must match");
+        }
+
+        return ResponseEntity.ok(ApiResult.success("Staff updated successfully", mediator.send(request)));
     }
 
     @DeleteMapping("/{id}")

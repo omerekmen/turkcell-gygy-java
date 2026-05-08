@@ -3,6 +3,7 @@ package com.turkcell.library_cqrs.api.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
-import com.turkcell.library_cqrs.api.dto.book.BookResponse;
-import com.turkcell.library_cqrs.api.dto.book.CreateBookRequest;
-import com.turkcell.library_cqrs.api.dto.book.UpdateBookRequest;
+import com.turkcell.library_cqrs.application.features.book.BookResponse;
 import com.turkcell.library_cqrs.application.features.book.command.create.CreateBookCommand;
 import com.turkcell.library_cqrs.application.features.book.command.delete.DeleteBookCommand;
 import com.turkcell.library_cqrs.application.features.book.command.update.UpdateBookCommand;
@@ -38,17 +37,10 @@ public class BooksController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResult<BookResponse>> create(@RequestBody CreateBookRequest request) {
-        var dto = mediator.send(new CreateBookCommand(
-            request.getTitle(),
-            request.getIsbn(),
-            request.getPublisherId(),
-            request.getPublishedYear(),
-            request.getCategoryId(),
-            request.getAuthorIds()
-        ));
+    public ResponseEntity<ApiResult<BookResponse>> create(@Valid @RequestBody CreateBookCommand request) {
+        var dto = mediator.send(request);
 
-        return ResponseEntity.created(URI.create("/books/" + dto.getId()))
+        return ResponseEntity.created(URI.create("/books/" + dto.id()))
             .body(ApiResult.success(HttpStatus.CREATED.value(), "Book created successfully", dto));
     }
 
@@ -67,16 +59,12 @@ public class BooksController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResult<BookResponse>> update(@PathVariable UUID id, @RequestBody UpdateBookRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Book updated successfully", mediator.send(new UpdateBookCommand(
-            id,
-            request.getTitle(),
-            request.getIsbn(),
-            request.getPublisherId(),
-            request.getPublishedYear(),
-            request.getCategoryId(),
-            request.getAuthorIds()
-        ))));
+    public ResponseEntity<ApiResult<BookResponse>> update(@PathVariable UUID id, @Valid @RequestBody UpdateBookCommand request) {
+        if (!id.equals(request.id())) {
+            throw new IllegalArgumentException("Path id and request body id must match");
+        }
+
+        return ResponseEntity.ok(ApiResult.success("Book updated successfully", mediator.send(request)));
     }
 
     @DeleteMapping("/{id}")

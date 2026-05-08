@@ -3,6 +3,7 @@ package com.turkcell.library_cqrs.api.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
-import com.turkcell.library_cqrs.api.dto.reservation.CreateReservationRequest;
-import com.turkcell.library_cqrs.api.dto.reservation.ReservationResponse;
-import com.turkcell.library_cqrs.api.dto.reservation.UpdateReservationStatusRequest;
+import com.turkcell.library_cqrs.application.features.reservation.ReservationResponse;
 import com.turkcell.library_cqrs.application.features.reservation.command.create.CreateReservationCommand;
 import com.turkcell.library_cqrs.application.features.reservation.command.delete.DeleteReservationCommand;
 import com.turkcell.library_cqrs.application.features.reservation.command.update.UpdateReservationStatusCommand;
@@ -39,9 +38,9 @@ public class ReservationsController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResult<ReservationResponse>> create(@RequestBody CreateReservationRequest request) {
-        var dto = mediator.send(new CreateReservationCommand(request.getStudentId(), request.getBookId(), request.getExpiresAt()));
-        return ResponseEntity.created(URI.create("/reservations/" + dto.getId()))
+    public ResponseEntity<ApiResult<ReservationResponse>> create(@Valid @RequestBody CreateReservationCommand request) {
+        var dto = mediator.send(request);
+        return ResponseEntity.created(URI.create("/reservations/" + dto.id()))
             .body(ApiResult.success(HttpStatus.CREATED.value(), "Reservation created successfully", dto));
     }
 
@@ -61,8 +60,12 @@ public class ReservationsController {
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ApiResult<ReservationResponse>> updateStatus(@PathVariable UUID id, @RequestBody UpdateReservationStatusRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Reservation status updated successfully", mediator.send(new UpdateReservationStatusCommand(id, request.getStatus(), request.getExpiresAt()))));
+    public ResponseEntity<ApiResult<ReservationResponse>> updateStatus(@PathVariable UUID id, @Valid @RequestBody UpdateReservationStatusCommand request) {
+        if (!id.equals(request.id())) {
+            throw new IllegalArgumentException("Path id and request body id must match");
+        }
+
+        return ResponseEntity.ok(ApiResult.success("Reservation status updated successfully", mediator.send(request)));
     }
 
     @DeleteMapping("/{id}")

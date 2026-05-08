@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.loan.query.getbyid;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.loan.LoanResponse;
+import com.turkcell.library_cqrs.application.features.loan.LoanResponse;
 import com.turkcell.library_cqrs.application.features.loan.mapper.LoanMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.QueryHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.LoanRepository;

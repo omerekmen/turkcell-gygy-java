@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.reservation.command.updat
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.reservation.ReservationResponse;
+import com.turkcell.library_cqrs.application.features.reservation.ReservationResponse;
 import com.turkcell.library_cqrs.application.features.reservation.mapper.ReservationMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.CommandHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.ReservationRepository;

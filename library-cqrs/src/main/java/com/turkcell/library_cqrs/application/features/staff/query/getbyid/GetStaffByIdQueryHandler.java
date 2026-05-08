@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.staff.query.getbyid;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.staff.StaffResponse;
+import com.turkcell.library_cqrs.application.features.staff.StaffResponse;
 import com.turkcell.library_cqrs.application.features.staff.mapper.StaffMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.QueryHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.StaffRepository;

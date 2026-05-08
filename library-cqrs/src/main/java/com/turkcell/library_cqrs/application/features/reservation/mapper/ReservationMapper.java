@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.reservation.mapper;
 
 import java.util.List;
 
-import com.turkcell.library_cqrs.api.dto.reservation.ReservationResponse;
+import com.turkcell.library_cqrs.application.features.reservation.ReservationResponse;
 import com.turkcell.library_cqrs.domain.entity.Reservation;
 
 public final class ReservationMapper {
@@ -15,15 +15,15 @@ public final class ReservationMapper {
             return null;
         }
 
-        var dto = new ReservationResponse();
-        dto.setId(entity.getId());
-        dto.setStudentId(entity.getStudent() != null ? entity.getStudent().getId() : null);
-        dto.setBookId(entity.getBook() != null ? entity.getBook().getId() : null);
-        dto.setStatus(entity.getStatus());
-        dto.setPosition(entity.getPosition());
-        dto.setReservedAt(entity.getReservedAt());
-        dto.setExpiresAt(entity.getExpiresAt());
-        return dto;
+        return new ReservationResponse(
+            entity.getId(),
+            entity.getStudent() != null ? entity.getStudent().getId() : null,
+            entity.getBook() != null ? entity.getBook().getId() : null,
+            entity.getStatus(),
+            entity.getPosition(),
+            entity.getReservedAt(),
+            entity.getExpiresAt()
+        );
     }
 
     public static List<ReservationResponse> toDtoList(List<Reservation> entities) {

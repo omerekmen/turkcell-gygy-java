@@ -2,7 +2,7 @@ package com.turkcell.library_cqrs.application.features.category.query.getbyid;
 
 import org.springframework.stereotype.Component;
 
-import com.turkcell.library_cqrs.api.dto.category.CategoryResponse;
+import com.turkcell.library_cqrs.application.features.category.CategoryResponse;
 import com.turkcell.library_cqrs.application.features.category.mapper.CategoryMapper;
 import com.turkcell.library_cqrs.core.mediator.cqrs.QueryHandler;
 import com.turkcell.library_cqrs.infrastructure.persistance.postgresql.CategoryRepository;

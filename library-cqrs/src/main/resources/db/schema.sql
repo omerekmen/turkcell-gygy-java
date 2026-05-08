@@ -150,3 +150,15 @@ CREATE INDEX IF NOT EXISTS idx_exception_logs_exception_type ON exception_logs(e
 CREATE INDEX IF NOT EXISTS idx_exception_logs_status_code ON exception_logs(status_code);
 CREATE INDEX IF NOT EXISTS idx_exception_logs_user_info ON exception_logs(user_info);
 CREATE INDEX IF NOT EXISTS idx_exception_logs_client_ip ON exception_logs(client_ip);
+
+-- Request Logging Table
+CREATE TABLE IF NOT EXISTS request_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    request_type VARCHAR(255),
+    request_payload TEXT,
+    response_payload TEXT,
+    duration_ms BIGINT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_request_logs_created_at ON request_logs(created_at);

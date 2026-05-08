@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.turkcell.library_cqrs.api.dto.loan.LoanResponse;
+import com.turkcell.library_cqrs.application.features.loan.LoanResponse;
 import com.turkcell.library_cqrs.core.mediator.cqrs.Command;
 
 public record CreateLoanCommand(

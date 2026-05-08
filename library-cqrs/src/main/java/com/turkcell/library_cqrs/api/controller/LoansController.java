@@ -3,6 +3,7 @@ package com.turkcell.library_cqrs.api.controller;
 import java.net.URI;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkcell.library_cqrs.api.dto.ApiResult;
-import com.turkcell.library_cqrs.api.dto.loan.CreateLoanRequest;
-import com.turkcell.library_cqrs.api.dto.loan.LoanResponse;
-import com.turkcell.library_cqrs.api.dto.loan.ReturnLoanRequest;
-import com.turkcell.library_cqrs.api.dto.loan.UpdateLoanStatusRequest;
+import com.turkcell.library_cqrs.application.features.loan.LoanResponse;
 import com.turkcell.library_cqrs.application.features.loan.command.create.CreateLoanCommand;
 import com.turkcell.library_cqrs.application.features.loan.command.delete.DeleteLoanCommand;
 import com.turkcell.library_cqrs.application.features.loan.command.returnloan.ReturnLoanCommand;
@@ -40,15 +38,10 @@ public class LoansController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResult<LoanResponse>> create(@RequestBody CreateLoanRequest request) {
-        var dto = mediator.send(new CreateLoanCommand(
-            request.getStudentId(),
-            request.getStaffId(),
-            request.getDueDate(),
-            request.getBookCopyIds()
-        ));
+    public ResponseEntity<ApiResult<LoanResponse>> create(@Valid @RequestBody CreateLoanCommand request) {
+        var dto = mediator.send(request);
 
-        return ResponseEntity.created(URI.create("/loans/" + dto.getId()))
+        return ResponseEntity.created(URI.create("/loans/" + dto.id()))
             .body(ApiResult.success(HttpStatus.CREATED.value(), "Loan created successfully", dto));
     }
 
@@ -68,13 +61,17 @@ public class LoansController {
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ApiResult<LoanResponse>> updateStatus(@PathVariable UUID id, @RequestBody UpdateLoanStatusRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Loan status updated successfully", mediator.send(new UpdateLoanStatusCommand(id, request.getStatus()))));
+    public ResponseEntity<ApiResult<LoanResponse>> updateStatus(@PathVariable UUID id, @Valid @RequestBody UpdateLoanStatusCommand request) {
+        if (!id.equals(request.id())) {
+            throw new IllegalArgumentException("Path id and request body id must match");
+        }
+
+        return ResponseEntity.ok(ApiResult.success("Loan status updated successfully", mediator.send(request)));
     }
 
     @PostMapping("/{id}/return")
-    public ResponseEntity<ApiResult<LoanResponse>> returnLoan(@PathVariable UUID id, @RequestBody ReturnLoanRequest request) {
-        return ResponseEntity.ok(ApiResult.success("Loan returned successfully", mediator.send(new ReturnLoanCommand(id, request.getProcessedByStaffId()))));
+    public ResponseEntity<ApiResult<LoanResponse>> returnLoan(@PathVariable UUID id, @Valid @RequestBody ReturnLoanCommand request) {
+        return ResponseEntity.ok(ApiResult.success("Loan returned successfully", mediator.send(request)));
     }
 
     @DeleteMapping("/{id}")
