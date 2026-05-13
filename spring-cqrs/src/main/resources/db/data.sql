@@ -1,3 +1,8 @@
+INSERT INTO roles (id, name) VALUES
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'USER'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'ADMIN')
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO categories (id, name) VALUES
 ('11111111-1111-1111-1111-111111111111', 'Electronics'),
 ('22222222-2222-2222-2222-222222222222', 'Home Office'),

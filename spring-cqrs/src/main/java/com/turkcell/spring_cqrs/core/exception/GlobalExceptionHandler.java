@@ -18,8 +18,7 @@ public class GlobalExceptionHandler {
         this.exceptionLogRepository = exceptionLogRepository;
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+    private void persistException(Exception ex, WebRequest request) {
         try {
             ExceptionLog log = new ExceptionLog();
             log.setExceptionType(ex.getClass().getName());
@@ -32,7 +31,25 @@ public class GlobalExceptionHandler {
         } catch (Exception ignore) {
             System.err.println("Failed to persist exception log: " + ignore.getMessage());
         }
+    }
 
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ResponseEntity<Object> handleUnauthenticated(UnauthenticatedException ex, WebRequest request) {
+        persistException(ex, request);
+        String message = ex.getMessage() != null ? ex.getMessage() : "Unauthenticated";
+        return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Object> handleUnauthorized(UnauthorizedException ex, WebRequest request) {
+        persistException(ex, request);
+        String message = ex.getMessage() != null ? ex.getMessage() : "Forbidden";
+        return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+        persistException(ex, request);
         return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
